@@ -1,0 +1,18 @@
+# Exported from Render on 2024-12-02T22:45:24Z
+services:
+  - type: web
+    name: tasker-backend
+    runtime: node
+    repo: https://github.com/syedtazyeen/tasker-backend
+    plan: free
+    envVars:
+      - key: MONGO_DB_NAME
+        sync: false
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+    region: virginia
+    buildCommand: npm i -g pnpm; pnpm i; pnpm run build;
+    startCommand: pnpm run start:prod
+version: '1'
