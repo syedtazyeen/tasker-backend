@@ -16,23 +16,10 @@ export class UsersService {
       const createdUser = new this.userModel(user);
       return await createdUser.save();
     } catch (error) {
-      if (error instanceof MongoError && error.code === 11000) {
-        const errorMessage = error.errmsg || '';
-
-        // Regex with the global flag to match multiple occurrences of duplicate fields
-        const duplicateFieldMatches = [
-          ...errorMessage.matchAll(/index: (\w+)_1 dup key/g),
-        ];
-
-        const duplicateEmailField = duplicateFieldMatches.find(
-          (match) => match[0] === 'email' || match[1] === 'email',
+      if ((error as any)?.code === 11000) {
+        throw new ConflictException(
+          (error as any)?.message || 'Duplicate value for a unique field.',
         );
-
-        if (duplicateEmailField) {
-          throw new ConflictException('Email already exists');
-        }
-
-        throw new ConflictException('Duplicate value for a unique field.');
       }
 
       throw error;
