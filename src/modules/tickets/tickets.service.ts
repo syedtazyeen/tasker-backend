@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Ticket, TicketDocument } from './tickets.entity';
+import { Ticket, TicketDocument } from './tickets.schema';
 import { CreateTicketReqDto, UpdateTicketReqDto } from './tickets.dto';
 
 @Injectable()

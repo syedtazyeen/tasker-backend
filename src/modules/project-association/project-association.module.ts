@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   ProjectAssociation,
   ProjectAssociationSchema,
-} from './project-association.entity';
+} from './project-association.schema';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';
