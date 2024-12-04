@@ -3,7 +3,6 @@ import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@/src/app.module';
 import { ProjectMock, UserMock } from './common/mock';
-import { Types } from 'mongoose';
 
 describe('Project Association API (e2e)', () => {
   let app: INestApplication;
