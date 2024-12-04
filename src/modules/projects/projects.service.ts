@@ -1,11 +1,11 @@
 import { ConflictException, Injectable, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Project, ProjectDocument } from './projects.entity';
+import { Project, ProjectDocument } from './projects.schema';
 import { CreateProjectReqDto, UpdateProjectReqDto } from './projects.dto';
 import { ProjectAssociationService } from '../project-association/project-association.service';
 import { AuthGuard } from '@/src/common/guards';
-import { ProjectAssociation } from '../project-association/project-association.entity';
+import { ProjectAssociation } from '../project-association/project-association.schema';
 import { UserRole } from '@/src/common/enums';
 import { MongoError } from 'mongodb';
 

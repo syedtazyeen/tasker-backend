@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Project, ProjectSchema } from './projects.entity';
+import { Project, ProjectSchema } from './projects.schema';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';

@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import {
   ProjectAssociation,
   ProjectAssociationDocument,
-} from './project-association.entity';
+} from './project-association.schema';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Events } from '@/src/lib/events';
 

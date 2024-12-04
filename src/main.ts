@@ -41,7 +41,7 @@ async function bootstrap() {
   await app.listen(port);
 
   logger.ascii('! Application started !', () => {
-    logger.info('Application is running on: http://localhost:3000');
+    logger.info(`Application is running on port ${port}`);
   });
 }
 

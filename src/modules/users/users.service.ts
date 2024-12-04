@@ -1,8 +1,7 @@
 import { Model } from 'mongoose';
-import { MongoError } from 'mongodb';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './users.entity';
+import { User, UserDocument } from './users.schema';
 import { UserStatus } from '@/src/common/enums';
 import { UpdateUserReqDto } from './users.dto';
 import { RegisterAuthReqDto } from '../auth/auth.dto';
