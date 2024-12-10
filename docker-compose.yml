@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "3010:3010"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - nest-network
+
+networks:
+  nest-network:
+    driver: bridge

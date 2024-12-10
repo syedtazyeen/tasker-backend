@@ -1,0 +1,55 @@
+name: Test CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongo --eval \"db.runCommand({ ping: 1 })\"" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          for i in {1..30}; do
+            if nc -z localhost 27017; then
+              echo "MongoDB is ready"
+              break
+            fi
+            echo "Waiting for MongoDB..."
+            sleep 1
+          done
+
+      - name: Run tests
+        env:
+          JWT_SECRET: "123123"
+          MONGO_URI: mongodb://localhost:27017/?retryWrites=true&w=majority&appName=Cluster0
+          MONGO_DB_NAME: test
+        run: pnpm run test
