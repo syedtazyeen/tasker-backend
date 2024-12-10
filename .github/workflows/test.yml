@@ -36,16 +36,9 @@ jobs:
             sleep 2
           done
 
-      - name: Decode and restore google-services.json
-        run: |
-          echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}" | base64 --decode > $HOME/google-services.json
-        env:
-          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-
       - name: Run tests with npm
         run: npm test
         env:
           CI: true
           MONGO_URI: mongodb://localhost:27017
           MONGO_DB_NAME: test
-          GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-service.json
