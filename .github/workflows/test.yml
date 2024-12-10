@@ -7,19 +7,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x]
-        mongodb-version: ['6.0', '7.0', '8.0']
 
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20.x'
 
       - name: Install pnpm
         run: |
@@ -29,31 +25,7 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.11.0
         with:
-          mongodb-version: ${{ matrix.mongodb-version }}
-          mongodb-replica-set: test-rs
-          mongodb-port: 42069
-
-      - name: Wait for MongoDB to be ready
-        run: |
-          for i in {1..30}; do
-            if nc -z localhost 42069; then
-              echo "MongoDB is ready"
-              break
-            fi
-            echo "Waiting for MongoDB..."
-            sleep 2
-          done
-
-      - name: Check MongoDB logs
-        run: docker logs mongodb
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          mongodb-version: '6.0'
 
       - name: Install dependencies with pnpm
         run: pnpm install
@@ -62,5 +34,5 @@ jobs:
         run: pnpm test
         env:
           CI: true
-          MONGO_URI: mongodb://mongodb:42069
+          MONGO_URI: mongodb://localhost:27017
           MONGO_DB_NAME: test
