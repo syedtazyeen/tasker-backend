@@ -1,6 +1,7 @@
 # Tasker API
 
 ## Description
+A brief description of your Tasker API project goes here.
 
 ## Installation
 
@@ -9,6 +10,15 @@ $ pnpm install
 ```
 
 ## Running the app
+
+### Using Docker Compose
+ 
+Start the container:
+   ```bash
+   docker-compose up
+   ```
+   
+### Without Docker
 
 ```bash
 # development
@@ -21,6 +31,10 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
+Access the app at `http://localhost:3010`.
+
+---
+
 ## Test
 
 ```bash
@@ -30,7 +44,6 @@ $ pnpm run test:e2e
 # test coverage
 $ pnpm run test:cov
 ```
-
 
 ## License
 
