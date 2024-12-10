@@ -1,37 +1,55 @@
-version: "3.8"
+name: Test CI
 
-services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
-      - MONGO_INITDB_DATABASE=production
-    ports:
-      - "27017:27017"  # Expose the MongoDB default port
-    volumes:
-      - mongo-data:/data/db  # Persist data on the host
-    networks:
-      - mynetwork
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
 
-  app:
-    build: .
-    container_name: node_app
-    depends_on:
-      - mongodb
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017 
-      - MONGO_DB_NAME=${MONGO_DB_NAME} 
-      - JWT_SECRET=${JWT_SECRET} 
-    ports:
-      - "3010:3010"
-    networks:
-      - mynetwork
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-volumes:
-  mongo-data:
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongo --eval \"db.runCommand({ ping: 1 })\"" --health-interval=10s --health-timeout=5s --health-retries=5
 
-networks:
-  mynetwork:
-    driver: bridge
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+        with:
+          version: latest
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get install docker-compose
+
+      - name: Build and start services using Docker Compose
+        run: |
+          docker-compose -f docker-compose.yml up -d
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          for i in {1..30}; do
+            if nc -z localhost 27017; then
+              echo "MongoDB is ready"
+              break
+            fi
+            echo "Waiting for MongoDB..."
+            sleep 2
+          done
+
+      - name: Run tests
+        env:
+          JWT_SECRET: "123123"
+          MONGO_URI: mongodb://mongodb:27017
+          MONGO_DB_NAME: test
+        run: pnpm run test
+
+      - name: Clean up
+        run: docker-compose down
