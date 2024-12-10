@@ -1,4 +1,4 @@
-import { EventCategory, EventStatus } from "../enums";
+import { EventCategory, EventStatus } from '../enums';
 
 export type Event = {
   id: string;
@@ -13,4 +13,3 @@ export type Event = {
   startAt: Date;
   endAt: Date;
 };
-

@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { GoogleCalendarService } from './google-calendar.service';
-import { Event as EventType } from '@/src/common/types';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Event, EventDocument } from './events.schema';
@@ -14,7 +13,6 @@ import {
   EventUpdateRequest,
 } from './events.dto';
 import { isValidDate, validateObjectId } from '@/src/lib/utils';
-import { validate } from 'class-validator';
 
 @Injectable()
 export class EventsService {

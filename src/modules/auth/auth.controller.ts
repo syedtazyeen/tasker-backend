@@ -4,14 +4,13 @@ import { SwaggerTag } from './auth.swagger';
 import {
   CheckEmailAuthReqDto,
   LoginAuthReqDto,
-  RegisterAuthReqDto,        
+  RegisterAuthReqDto,
 } from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  
   @Post('validate')
   @HttpCode(200)
   @SwaggerTag.validateEmail()

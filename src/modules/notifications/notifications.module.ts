@@ -18,6 +18,6 @@ import { ProjectsModule } from '../projects/projects.module';
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService, AuthService, JwtService],
-  exports: [NotificationsService]
+  exports: [NotificationsService],
 })
 export class NotificationsModule {}

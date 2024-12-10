@@ -35,7 +35,7 @@ export class ProjectsService {
       this.projectAssociationService.create(projectAssociation);
       return createdProject.save();
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (error instanceof MongoError && error.code === 11000) {
         const errorMessage = error.errmsg || '';
 
