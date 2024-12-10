@@ -1,41 +1,42 @@
-name: Test CI
+name: Run tests
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd="mongo --eval \"db.runCommand({ ping: 1 })\""
-          --health-interval=15s
-          --health-timeout=15s
-          --health-retries=10
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+        mongodb-version: ['6.0', '7.0', '8.0']
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Git checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-      - name: Build and start services using Docker Compose
+      - name: Install pnpm
         run: |
-          docker-compose -f docker-compose.yml up -d
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.11.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: test-rs
+          mongodb-port: 42069
 
       - name: Wait for MongoDB to be ready
         run: |
           for i in {1..30}; do
-            if nc -z mongodb 27017; then
+            if nc -z localhost 42069; then
               echo "MongoDB is ready"
               break
             fi
@@ -46,15 +47,20 @@ jobs:
       - name: Check MongoDB logs
         run: docker logs mongodb
 
-      - name: Install dependencies
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies with pnpm
         run: pnpm install
 
-      - name: Run tests
+      - name: Run tests with pnpm
+        run: pnpm test
         env:
-          JWT_SECRET: '123123'
-          MONGO_URI: mongodb://mongodb:27017 # Using service name
+          CI: true
+          MONGO_URI: mongodb://mongodb:42069
           MONGO_DB_NAME: test
-        run: pnpm run test
-
-      - name: Clean up
-        run: docker-compose down -v
