@@ -1,14 +1,37 @@
 version: "3.8"
+
 services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_INITDB_DATABASE=production
+    ports:
+      - "27017:27017"  # Expose the MongoDB default port
+    volumes:
+      - mongo-data:/data/db  # Persist data on the host
+    networks:
+      - mynetwork
+
   app:
     build: .
+    container_name: node_app
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017 
+      - MONGO_DB_NAME=${MONGO_DB_NAME} 
+      - JWT_SECRET=${JWT_SECRET} 
     ports:
       - "3010:3010"
-    environment:
-      - NODE_ENV=production
     networks:
-      - nest-network
+      - mynetwork
+
+volumes:
+  mongo-data:
 
 networks:
-  nest-network:
+  mynetwork:
     driver: bridge
