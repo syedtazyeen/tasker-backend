@@ -7,6 +7,7 @@ import {
   NotificationsModule,
   ProjectsModule,
   TicketsModule,
+  EventsModule,
 } from './modules';
 
 @Module({
@@ -18,6 +19,7 @@ import {
     ProjectAssociationModule,
     NotificationsModule,
     TicketsModule,
+    EventsModule,
   ],
 })
 export class AppModule {}

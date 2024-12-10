@@ -31,4 +31,4 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI_TEST }}
           MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME_TEST }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        run: pnpm run test:e2e
+        run: pnpm run test
