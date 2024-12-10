@@ -36,9 +36,15 @@ jobs:
             sleep 2
           done
 
+      - name: Set up Google Cloud credentials
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}" > $HOME/google-service.json
+          gcloud auth activate-service-account --key-file=$HOME/google-service.json
+
       - name: Run tests with npm
         run: npm test
         env:
           CI: true
           MONGO_URI: mongodb://localhost:27017
           MONGO_DB_NAME: test
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/google-service.json
