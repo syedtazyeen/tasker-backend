@@ -1,4 +1,3 @@
-import { NextFunction } from 'express';
 import {
   HttpException,
   HttpStatus,
@@ -8,7 +7,7 @@ import {
 
 @Injectable()
 export default class UnmatchedMiddlware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
+  use() {
     throw new HttpException('Route not found', HttpStatus.NOT_FOUND);
   }
 }

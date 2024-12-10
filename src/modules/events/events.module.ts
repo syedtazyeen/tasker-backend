@@ -9,7 +9,7 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Event.name, schema: EventSchema }]),
-    AuthModule
+    AuthModule,
   ],
   controllers: [EventsController],
   providers: [EventsService, GoogleCalendarService],

@@ -7,7 +7,6 @@ import { ProjectsModule } from './projects/projects.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { UsersModule } from './users/users.module';
 
-
 export {
   AuthModule,
   ConfigModule,
@@ -16,5 +15,5 @@ export {
   ProjectAssociationModule,
   ProjectsModule,
   NotificationsModule,
-  EventsModule
+  EventsModule,
 };

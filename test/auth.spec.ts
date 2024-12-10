@@ -13,7 +13,7 @@ describe('Auth API - User Registration and Login (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    
+
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -51,7 +51,7 @@ describe('Auth API - User Registration and Login (e2e)', () => {
         .send(existingUser)
         .expect(409);
     });
-    
+
     it('should return 400 if missing fields', async () => {
       const newUser = UserMock.createNewUser();
       const badUser = {
@@ -63,7 +63,6 @@ describe('Auth API - User Registration and Login (e2e)', () => {
         .send(badUser)
         .expect(400);
     });
-    
   });
 
   describe('POST /auth/login', () => {

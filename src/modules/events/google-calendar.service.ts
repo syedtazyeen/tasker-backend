@@ -29,7 +29,7 @@ export class GoogleCalendarService {
       indian: 'en.indian#holiday@group.v.calendar.google.com',
       usa: 'en.usa#holiday@group.v.calendar.google.com',
     };
- 
+
     const calendarId = holidayCalendarId[country];
 
     try {

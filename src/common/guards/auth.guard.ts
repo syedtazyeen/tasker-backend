@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
     const isAuthenticated = await this.authService.validateRequest(request);
 
     if (!isAuthenticated) {
-      throw new UnauthorizedException("User is not authorized");
+      throw new UnauthorizedException('User is not authorized');
     }
 
     return true;

@@ -1,4 +1,3 @@
-import { User } from '@/src/common/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { UserResDto } from '../users/users.dto';
@@ -32,7 +31,7 @@ export class LoginAuthResDto {
   accessToken: string;
 
   @ApiProperty()
-  user : UserResDto
+  user: UserResDto;
 }
 
 export class RegisterAuthReqDto {
