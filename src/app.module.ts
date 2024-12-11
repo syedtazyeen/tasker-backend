@@ -17,8 +17,8 @@ import {
     AuthModule,
     ProjectsModule,
     ProjectAssociationModule,
-    NotificationsModule,
-    TicketsModule,
+    //NotificationsModule,
+    //TicketsModule,
     EventsModule,
   ],
 })

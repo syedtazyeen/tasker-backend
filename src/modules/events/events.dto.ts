@@ -9,7 +9,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class EventResponse implements Event {
+export class EventResponse {
   @ApiProperty()
   id: string;
 
@@ -29,7 +29,42 @@ export class EventResponse implements Event {
   createdBy: string | null;
 
   @ApiProperty()
-  associatedTo: string[];
+  organisers: string[];
+
+  @ApiProperty()
+  recepients: string[];
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty()
+  startAt: Date;
+
+  @ApiProperty()
+  endAt: Date;
+}
+
+export class EventListResponse {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty({ required: false })
+  description?: string;
+
+  @ApiProperty({ type: 'string', enum: EventStatus })
+  status: EventStatus;
+
+  @ApiProperty({ type: 'string', enum: EventCategory })
+  category: EventCategory;
+
+  @ApiProperty({ required: false })
+  createdBy: string | null;
 
   @ApiProperty()
   createdAt: Date;
@@ -84,7 +119,7 @@ export class EventCreateRequest implements Partial<Event> {
 
   @ApiProperty()
   @IsArray()
-  projectIds: string[];
+  projects: string[];
 
   @ApiProperty()
   @IsDateString()
@@ -93,6 +128,11 @@ export class EventCreateRequest implements Partial<Event> {
   @ApiProperty()
   @IsDateString()
   endAt: Date;
+}
+
+export class EventCreateResponse {
+  eventId: string;
+  associationId: string;
 }
 
 export class EventUpdateRequest implements Partial<Event> {
@@ -147,4 +187,31 @@ export class EventUpdateAssociatedRequest {
   @IsOptional()
   @IsArray()
   removeRecipients?: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  addProjects?: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  removeProjects?: string[];
+}
+
+export class EventAssociationResponse {
+  @ApiProperty()
+  eventId: string;
+
+  @ApiProperty()
+  createdBy: string;
+
+  @ApiProperty()
+  organisers: string[];
+
+  @ApiProperty()
+  recepients: string[];
+
+  @ApiProperty()
+  projects: string[];
 }
