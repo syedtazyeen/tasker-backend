@@ -76,7 +76,15 @@ export class EventCreateRequest implements Partial<Event> {
 
   @ApiProperty()
   @IsArray()
-  associatedTo: string[];
+  organisers: string[];
+
+  @ApiProperty()
+  @IsArray()
+  recepients: string[];
+
+  @ApiProperty()
+  @IsArray()
+  projectIds: string[];
 
   @ApiProperty()
   @IsDateString()
@@ -123,10 +131,20 @@ export class EventUpdateAssociatedRequest {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsArray()
-  addUserIds?: string[];
+  addOrganisers?: string[];
 
   @ApiProperty({ required: false })
   @IsOptional()
   @IsArray()
-  removeUserIds?: string[];
+  removeOrganisers?: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  addRecipients?: string[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsArray()
+  removeRecipients?: string[];
 }

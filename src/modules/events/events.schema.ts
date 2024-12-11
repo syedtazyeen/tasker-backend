@@ -21,9 +21,6 @@ export class Event {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;
 
-  @Prop({ type: [Types.ObjectId], ref: 'User' })
-  associatedTo: Types.ObjectId[];
-
   @Prop({ type: Date })
   startAt: Date;
 
