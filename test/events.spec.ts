@@ -10,7 +10,6 @@ describe('Events API (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
   let eventId: string;
-  let eventAssociationId: string;
   let projectId: string;
   let userId: string;
 
@@ -63,7 +62,6 @@ describe('Events API (e2e)', () => {
         .expect(201);
 
       eventId = response.body.eventId;
-      eventAssociationId = response.body.eventAssociationId;
     });
 
     it('should return 400 for invalid data', async () => {

@@ -4,9 +4,9 @@ import {
   ConfigModule,
   UsersModule,
   ProjectAssociationModule,
-  NotificationsModule,
+  //NotificationsModule,
   ProjectsModule,
-  TicketsModule,
+  //TicketsModule,
   EventsModule,
 } from './modules';
 
