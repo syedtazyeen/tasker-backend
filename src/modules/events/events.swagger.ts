@@ -8,6 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { applyDecorators } from '@nestjs/common';
 import {
+  EventAssociationResponse,
   EventCreateRequest,
   EventResponse,
   EventUpdateAssociatedRequest,
@@ -20,6 +21,16 @@ export const SwaggerTag = {
       ApiBearerAuth(),
       ApiOperation({
         summary: 'Get list of events',
+      }),
+      ApiQuery({
+        name: 'userId',
+        type: String,
+        required: false,
+      }),
+      ApiQuery({
+        name: 'projectId',
+        type: String,
+        required: false,
       }),
       ApiQuery({
         name: 'startTime',
@@ -57,6 +68,33 @@ export const SwaggerTag = {
         type: EventResponse,
       }),
     ),
+  findByCriteria: () =>
+    applyDecorators(
+      ApiBearerAuth(),
+      ApiOperation({
+        summary: 'Get events by query',
+      }),
+      ApiParam({ name: 'userId', required: false }),
+      ApiParam({ name: 'projectId', required: false }),
+      ApiResponse({
+        status: 200,
+        description: 'Successfully retrieved a list of events',
+        type: [EventResponse],
+      }),
+    ),
+  getEventAssociation: () =>
+    applyDecorators(
+      ApiBearerAuth(),
+      ApiOperation({
+        summary: 'Get association for an event',
+      }),
+      ApiParam({ name: 'id' }),
+      ApiResponse({
+        status: 200,
+        description: 'Successfully retrieved an event associations',
+        type: EventAssociationResponse,
+      }),
+    ),
   create: () =>
     applyDecorators(
       ApiBearerAuth(),
@@ -89,11 +127,11 @@ export const SwaggerTag = {
         type: EventResponse,
       }),
     ),
-  updateAssociated: () =>
+  updateAssociaion: () =>
     applyDecorators(
       ApiBearerAuth(),
       ApiOperation({
-        summary: 'Update an event associated users',
+        summary: 'Update an event association',
       }),
       ApiParam({ name: 'id' }),
       ApiBody({
@@ -101,8 +139,8 @@ export const SwaggerTag = {
       }),
       ApiResponse({
         status: 200,
-        description: 'Successfully updated an event',
-        type: EventResponse,
+        description: 'Successfully updated an event association',
+        type: EventAssociationResponse,
       }),
     ),
 

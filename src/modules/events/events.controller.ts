@@ -10,7 +10,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { EventsService } from './events.service';
 import { SwaggerTag } from './events.swagger';
 import {
   EventCreateRequest,
@@ -18,6 +17,7 @@ import {
   EventUpdateRequest,
 } from './events.dto';
 import { AuthGuard } from '@/src/common/guards';
+import { EventsService } from './events.service';
 
 @Controller('events')
 @UseGuards(AuthGuard)
@@ -27,11 +27,19 @@ export class EventsController {
   @Get('')
   @SwaggerTag.getAll()
   getAllEvents(
+    @Query('userId') userId?: string,
+    @Query('projectId') projectId?: string,
     @Query('startTime') startTime?: string,
     @Query('endTime') endTime?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.eventsService.getAllEvents(startTime, endTime, limit);
+    return this.eventsService.getAllEvents(
+      userId,
+      projectId,
+      startTime,
+      endTime,
+      limit,
+    );
   }
 
   @Post('')
@@ -52,18 +60,24 @@ export class EventsController {
     return this.eventsService.update(id, body);
   }
 
-  @Put(':id/associatedTo')
-  @SwaggerTag.updateAssociated()
+  @Delete(':id')
+  @SwaggerTag.delete()
+  delete(@Param('id') id: string) {
+    return this.eventsService.remove(id);
+  }
+
+  @Get(':id/association')
+  @SwaggerTag.getEventAssociation()
+  getEventAssociations(@Param('id') id: string) {
+    return this.eventsService.findAssociationByEventId(id);
+  }
+
+  @Put(':id/association')
+  @SwaggerTag.updateAssociaion()
   updateAssociated(
     @Param('id') id: string,
     @Body() body: EventUpdateAssociatedRequest,
   ) {
     return this.eventsService.updateAssociated(id, body);
-  }
-
-  @Delete(':id')
-  @SwaggerTag.delete()
-  delete(@Param('id') id: string) {
-    return this.eventsService.remove(id);
   }
 }

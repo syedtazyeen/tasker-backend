@@ -32,10 +32,15 @@ export class EventMock {
       description: faker.lorem.paragraph(),
       status: faker.helpers.arrayElement(Object.values(EventStatus)),
       category: faker.helpers.arrayElement(Object.values(EventCategory)),
-      associatedTo: [
+      organisers: [
         new Types.ObjectId().toString(),
         new Types.ObjectId().toString(),
       ],
+      recepients: [
+        new Types.ObjectId().toString(),
+        new Types.ObjectId().toString(),
+      ],
+      projects: [new Types.ObjectId().toString()],
       startAt: faker.date.future(),
       endAt: faker.date.future(),
     };

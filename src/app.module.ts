@@ -4,9 +4,9 @@ import {
   ConfigModule,
   UsersModule,
   ProjectAssociationModule,
-  NotificationsModule,
+  //NotificationsModule,
   ProjectsModule,
-  TicketsModule,
+  //TicketsModule,
   EventsModule,
 } from './modules';
 
@@ -17,8 +17,8 @@ import {
     AuthModule,
     ProjectsModule,
     ProjectAssociationModule,
-    NotificationsModule,
-    TicketsModule,
+    //NotificationsModule,
+    //TicketsModule,
     EventsModule,
   ],
 })
