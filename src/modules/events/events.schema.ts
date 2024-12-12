@@ -6,6 +6,8 @@ export type EventDocument = Event & Document;
 
 @Schema({ timestamps: true })
 export class Event {
+  id: string;
+
   @Prop()
   name: string;
 
@@ -19,21 +21,26 @@ export class Event {
   category: EventCategory;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
-  createdBy: Types.ObjectId;
+  createdBy: string;
 
   @Prop({ type: Date })
   startAt: Date;
 
   @Prop({ type: Date })
   endAt: Date;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
 
 EventSchema.set('toJSON', {
   virtuals: true,
-  transform: (doc, ret) => {
+  transform: (_, ret) => {
     ret.id = ret._id.toString();
     delete ret._id;
+    delete ret.__v;
   },
 });

@@ -5,20 +5,22 @@ export type EventAssociationDocument = EventAssociation & Document;
 
 @Schema({ timestamps: true })
 export class EventAssociation {
+  id: string;
+
   @Prop({ type: Types.ObjectId, ref: 'Event' })
-  eventId: Types.ObjectId;
+  eventId: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
-  createdBy: Types.ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  organisers: Types.ObjectId[];
+  createdBy: string;
 
   @Prop({ type: [Types.ObjectId], ref: 'User' })
-  recepients: Types.ObjectId[];
+  organizers: string[];
 
-  @Prop({ required: false, type: Types.ObjectId, ref: 'Project' })
-  projects: Types.ObjectId[];
+  @Prop({ type: [Types.ObjectId], ref: 'User' })
+  recipients: string[];
+
+  @Prop({ type: Types.ObjectId, ref: 'Project' })
+  projects: string[];
 }
 
 export const EventAssociationSchema =
@@ -26,8 +28,9 @@ export const EventAssociationSchema =
 
 EventAssociationSchema.set('toJSON', {
   virtuals: true,
-  transform: (doc, ret) => {
+  transform: (_, ret) => {
     ret.id = ret._id.toString();
     delete ret._id;
+    delete ret.__v;
   },
 });
