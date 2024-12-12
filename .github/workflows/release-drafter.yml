@@ -1,37 +1,41 @@
-name: Release Drafter
+name: Release Drafter Workflow
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger on pushes to the main branch
   pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
+    types: [opened, reopened, synchronize]  # Trigger on pull request events
 
 permissions:
-  contents: read
+  contents: read  # Read access to repository content for generating changelog
 
 jobs:
-  changelog:
-    runs-on: ubuntu-latest
+  update_release_draft:
+    name: Update Release Draft
+    runs-on: ubuntu-latest  # Runs the workflow on the latest Ubuntu runner
+
+    permissions:
+      contents: write  # Write access to repository content to create a draft
+      pull-requests: write  # Write access to pull requests to update drafts
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4  # Check out the repository code
 
-      - name: Update Release Draft
-        uses: release-drafter/release-drafter@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Release Drafter
+        uses: release-drafter/release-drafter@v6  # Use Release Drafter to generate changelog
 
-      - name: Commit and Push Changelog
-        run: |-
-          git config --global user.name "ReleaseBot"
-          git config --global user.email "releasebot@example.com"
-          git add ./changelog/CHANGELOG.md
-          git commit -m "📝 docs(bot): Auto update changelog for release v${{ github.run_number }}"
-          git push
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "Release Drafter Bot"
+          git config --global user.email "release-drafter@github.com"
+          git add .  # Add any changes made by Release Drafter
+          git commit -m "docs🗒️: update release drafter changelog" || exit 0  # Commit changes if any
+          git push  # Push changes to the repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
+
