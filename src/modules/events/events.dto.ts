@@ -1,5 +1,4 @@
 import { EventCategory, EventStatus } from '@/src/common/enums';
-import { Event } from '@/src/common/types';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
@@ -26,60 +25,42 @@ export class EventResponse {
   category: EventCategory;
 
   @ApiProperty({ required: false })
-  createdBy: string | null;
-
-  @ApiProperty()
-  organisers: string[];
-
-  @ApiProperty()
-  recepients: string[];
-
-  @ApiProperty()
-  createdAt: Date;
-
-  @ApiProperty()
-  updatedAt: Date;
+  createdBy: string;
 
   @ApiProperty()
   startAt: Date;
 
   @ApiProperty()
   endAt: Date;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 }
 
-export class EventListResponse {
+export class EventAssociationResponse {
   @ApiProperty()
   id: string;
 
   @ApiProperty()
-  name: string;
-
-  @ApiProperty({ required: false })
-  description?: string;
-
-  @ApiProperty({ type: 'string', enum: EventStatus })
-  status: EventStatus;
-
-  @ApiProperty({ type: 'string', enum: EventCategory })
-  category: EventCategory;
-
-  @ApiProperty({ required: false })
-  createdBy: string | null;
+  eventId: string;
 
   @ApiProperty()
-  createdAt: Date;
+  createdBy: string;
 
   @ApiProperty()
-  updatedAt: Date;
+  organizers: string[];
 
   @ApiProperty()
-  startAt: Date;
+  recipients: string[];
 
   @ApiProperty()
-  endAt: Date;
+  projects: string[];
 }
 
-export class EventCreateRequest implements Partial<Event> {
+export class EventCreateRequest {
   @ApiProperty()
   @IsString()
   name: string;
@@ -111,11 +92,11 @@ export class EventCreateRequest implements Partial<Event> {
 
   @ApiProperty()
   @IsArray()
-  organisers: string[];
+  organizers: string[];
 
   @ApiProperty()
   @IsArray()
-  recepients: string[];
+  recipients: string[];
 
   @ApiProperty()
   @IsArray()
@@ -131,11 +112,14 @@ export class EventCreateRequest implements Partial<Event> {
 }
 
 export class EventCreateResponse {
-  eventId: string;
-  associationId: string;
+  @ApiProperty({ type: EventResponse })
+  event: EventResponse;
+
+  @ApiProperty({ type: EventAssociationResponse })
+  association: EventAssociationResponse;
 }
 
-export class EventUpdateRequest implements Partial<Event> {
+export class EventUpdateRequest {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
@@ -167,7 +151,7 @@ export class EventUpdateRequest implements Partial<Event> {
   endAt?: Date;
 }
 
-export class EventUpdateAssociatedRequest {
+export class EventAssociationUpdateRequest {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsArray()
@@ -197,21 +181,4 @@ export class EventUpdateAssociatedRequest {
   @IsOptional()
   @IsArray()
   removeProjects?: string[];
-}
-
-export class EventAssociationResponse {
-  @ApiProperty()
-  eventId: string;
-
-  @ApiProperty()
-  createdBy: string;
-
-  @ApiProperty()
-  organisers: string[];
-
-  @ApiProperty()
-  recepients: string[];
-
-  @ApiProperty()
-  projects: string[];
 }

@@ -3,13 +3,21 @@ import * as request from 'supertest';
 import { AppModule } from '@/src/app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventUpdateAssociatedRequest } from '@/src/modules/events/events.dto';
+import {
+  EventAssociationUpdateRequest,
+  EventCreateResponse,
+  EventResponse,
+} from '@/src/modules/events/events.dto';
 import { EventMock, UserMock } from '@/test/common/mock';
+import { Event } from '@/src/modules/events/events.schema';
+import { EventAssociation } from '@/src/modules/events/events-association.schema';
+import { startOfQuarter } from 'date-fns';
 
 describe('Events API (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
-  let eventId: string;
+  let event: Event;
+  let eventAssociation: EventAssociation;
   let projectId: string;
   let userId: string;
 
@@ -55,13 +63,23 @@ describe('Events API (e2e)', () => {
   describe('POST /events', () => {
     it('should create a new event', async () => {
       const newEvent = EventMock.createNewEvent();
-      const response = await request(app.getHttpServer())
+      const response: { body: EventCreateResponse } = await request(
+        app.getHttpServer(),
+      )
         .post('/events')
         .set('Authorization', `Bearer ${accessToken}`)
         .send(newEvent)
         .expect(201);
 
-      eventId = response.body.eventId;
+      event = response.body.event;
+      eventAssociation = response.body.association;
+      newEvent.organizers.push(userId);
+
+      expect(event.createdBy).toStrictEqual(userId);
+      expect(eventAssociation.eventId).toStrictEqual(response.body.event.id);
+      expect(eventAssociation.organizers).toStrictEqual(newEvent.organizers);
+      expect(eventAssociation.projects).toStrictEqual(newEvent.projects);
+      expect(eventAssociation.recipients).toStrictEqual(newEvent.recipients);
     });
 
     it('should return 400 for invalid data', async () => {
@@ -84,12 +102,15 @@ describe('Events API (e2e)', () => {
 
   describe('GET /events/:id', () => {
     it('should return the event by ID', async () => {
-      const response = await request(app.getHttpServer())
-        .get(`/events/${eventId}`)
+      const response: { body: EventResponse } = await request(
+        app.getHttpServer(),
+      )
+        .get(`/events/${event.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
-      expect(response.body.id).toBe(eventId);
+      expect(response.body.id).toBe(event.id);
+      expect(response.body.createdBy).toBe(userId);
     });
 
     it('should return 404 if event not found', async () => {
@@ -104,6 +125,7 @@ describe('Events API (e2e)', () => {
     it('should return all events', async () => {
       const response = await request(app.getHttpServer())
         .get('/events')
+        .query({ startTime: startOfQuarter(new Date()) })
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -113,7 +135,7 @@ describe('Events API (e2e)', () => {
     it('should return events for a user', async () => {
       const response = await request(app.getHttpServer())
         .get('/events')
-        .query({ userId })
+        .query({ startTime: startOfQuarter(new Date()), userId })
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -123,7 +145,7 @@ describe('Events API (e2e)', () => {
     it('should return events for a project', async () => {
       const response = await request(app.getHttpServer())
         .get('/events')
-        .query({ projectId })
+        .query({ startTime: startOfQuarter(new Date()), projectId })
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -147,7 +169,7 @@ describe('Events API (e2e)', () => {
       };
 
       const response = await request(app.getHttpServer())
-        .patch(`/events/${eventId}`)
+        .patch(`/events/${event.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send(updateEventDto)
         .expect(200);
@@ -170,7 +192,7 @@ describe('Events API (e2e)', () => {
       const invalidUpdate = { startAt: 'invalidDate', endAt: 'invalidDate' };
 
       await request(app.getHttpServer())
-        .patch(`/events/${eventId}`)
+        .patch(`/events/${event.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send(invalidUpdate)
         .expect(400);
@@ -180,11 +202,11 @@ describe('Events API (e2e)', () => {
   describe('PUT /events/:id/association', () => {
     it('should update event association with valid ObjectIds', async () => {
       const validUserIds = [
-        new Types.ObjectId().toString(),
-        new Types.ObjectId().toString(),
+        new Types.ObjectId()._id.toString('hex'),
+        new Types.ObjectId()._id.toString('hex'),
       ];
 
-      const updateAssociatedDto: EventUpdateAssociatedRequest = {
+      const updateAssociatedDto: EventAssociationUpdateRequest = {
         addOrganisers: validUserIds,
         removeOrganisers: [new Types.ObjectId().toString()],
         addRecipients: validUserIds,
@@ -192,14 +214,14 @@ describe('Events API (e2e)', () => {
       };
 
       await request(app.getHttpServer())
-        .put(`/events/${eventId}/association`)
+        .put(`/events/${event.id}/association`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send(updateAssociatedDto)
         .expect(200);
     });
 
     it('should return 404 if event not found', async () => {
-      const updateAssociatedDto: EventUpdateAssociatedRequest = {
+      const updateAssociatedDto: EventAssociationUpdateRequest = {
         addRecipients: [new Types.ObjectId().toString()],
       };
 
@@ -214,7 +236,7 @@ describe('Events API (e2e)', () => {
   describe('DELETE /events/:id', () => {
     it('should delete the event', async () => {
       await request(app.getHttpServer())
-        .delete(`/events/${eventId}`)
+        .delete(`/events/${event.id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
     });
@@ -228,7 +250,7 @@ describe('Events API (e2e)', () => {
 
     it('should return 401 if unauthorized', async () => {
       await request(app.getHttpServer())
-        .delete(`/events/${eventId}`)
+        .delete(`/events/${event.id}`)
         .expect(401);
     });
   });
