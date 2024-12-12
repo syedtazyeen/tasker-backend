@@ -32,8 +32,8 @@ jobs:
 
       - name: Commit and push changelog updates
         run: |
-          git config user.name "tasker"
-          git config user.email "themesyed@gmail.com"
+          git config --global user.name "tasker"
+          git config --global user.email "themesyed@gmail.com"
           git add CHANGELOG.md  # Assuming the changelog file is named `CHANGELOG.md`
-          git commit -m "chore: update changelog for PR #${{ github.event.pull_request.number }}"
+          git commit -m "🗒️ doc: update changelog for PR #${{ github.event.pull_request.number }}"
           git push origin ${{ github.head_ref }}  # Push back the changes to the PR branch
