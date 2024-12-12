@@ -9,9 +9,10 @@ import {
 import { applyDecorators } from '@nestjs/common';
 import {
   EventAssociationResponse,
+  EventAssociationUpdateRequest,
   EventCreateRequest,
+  EventCreateResponse,
   EventResponse,
-  EventUpdateAssociatedRequest,
   EventUpdateRequest,
 } from './events.dto';
 
@@ -23,6 +24,10 @@ export const SwaggerTag = {
         summary: 'Get list of events',
       }),
       ApiQuery({
+        name: 'startTime',
+        type: String,
+      }),
+      ApiQuery({
         name: 'userId',
         type: String,
         required: false,
@@ -31,12 +36,6 @@ export const SwaggerTag = {
         name: 'projectId',
         type: String,
         required: false,
-      }),
-      ApiQuery({
-        name: 'startTime',
-        type: String,
-        required: false,
-        default: new Date().toISOString(),
       }),
       ApiQuery({
         name: 'endTime',
@@ -101,14 +100,13 @@ export const SwaggerTag = {
       ApiOperation({
         summary: 'Create an event',
       }),
-      ApiParam({ name: 'id' }),
       ApiBody({
         type: EventCreateRequest,
       }),
       ApiResponse({
         status: 201,
         description: 'Successfully created an event',
-        type: EventResponse,
+        type: EventCreateResponse,
       }),
     ),
   update: () =>
@@ -135,7 +133,7 @@ export const SwaggerTag = {
       }),
       ApiParam({ name: 'id' }),
       ApiBody({
-        type: EventUpdateAssociatedRequest,
+        type: EventAssociationUpdateRequest,
       }),
       ApiResponse({
         status: 200,

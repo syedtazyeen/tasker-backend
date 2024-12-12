@@ -8,35 +8,43 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { SwaggerTag } from './events.swagger';
 import {
+  EventAssociationResponse,
+  EventAssociationUpdateRequest,
   EventCreateRequest,
-  EventUpdateAssociatedRequest,
+  EventResponse,
   EventUpdateRequest,
 } from './events.dto';
 import { AuthGuard } from '@/src/common/guards';
 import { EventsService } from './events.service';
+import { RequestWithUser } from '@/src/common/types';
+import { EventsAssociationService } from './event-association.service';
 
 @Controller('events')
 @UseGuards(AuthGuard)
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    private readonly eventAssociationService: EventsAssociationService,
+  ) {}
 
   @Get('')
   @SwaggerTag.getAll()
   getAllEvents(
+    @Query('startTime') startTime?: string,
     @Query('userId') userId?: string,
     @Query('projectId') projectId?: string,
-    @Query('startTime') startTime?: string,
     @Query('endTime') endTime?: string,
     @Query('limit') limit?: string,
-  ) {
+  ): Promise<EventResponse[]> {
     return this.eventsService.getAllEvents(
+      startTime,
       userId,
       projectId,
-      startTime,
       endTime,
       limit,
     );
@@ -44,40 +52,48 @@ export class EventsController {
 
   @Post('')
   @SwaggerTag.create()
-  createEvent(@Body() body: EventCreateRequest) {
-    return this.eventsService.create(body);
+  createEvent(
+    @Req() req: RequestWithUser,
+    @Body() body: EventCreateRequest,
+  ): Promise<EventResponse> {
+    return this.eventsService.createWithAssociation(req.user.sub, body);
   }
 
   @Get(':id')
   @SwaggerTag.getOne()
-  getOneEvent(@Param('id') id: string) {
+  getOneEvent(@Param('id') id: string): Promise<EventResponse> {
     return this.eventsService.findOne(id);
   }
 
   @Patch(':id')
   @SwaggerTag.update()
-  updateEvent(@Param('id') id: string, @Body() body: EventUpdateRequest) {
+  updateEvent(
+    @Param('id') id: string,
+    @Body() body: EventUpdateRequest,
+  ): Promise<EventResponse> {
     return this.eventsService.update(id, body);
   }
 
   @Delete(':id')
   @SwaggerTag.delete()
-  delete(@Param('id') id: string) {
+  delete(@Param('id') id: string): Promise<void> {
     return this.eventsService.remove(id);
   }
 
   @Get(':id/association')
   @SwaggerTag.getEventAssociation()
-  getEventAssociations(@Param('id') id: string) {
-    return this.eventsService.findAssociationByEventId(id);
+  getEventAssociations(
+    @Param('id') id: string,
+  ): Promise<EventAssociationResponse> {
+    return this.eventAssociationService.findByEventId(id);
   }
 
   @Put(':id/association')
   @SwaggerTag.updateAssociaion()
   updateAssociated(
     @Param('id') id: string,
-    @Body() body: EventUpdateAssociatedRequest,
-  ) {
-    return this.eventsService.updateAssociated(id, body);
+    @Body() body: EventAssociationUpdateRequest,
+  ): Promise<EventAssociationResponse> {
+    return this.eventAssociationService.update(id, body);
   }
 }

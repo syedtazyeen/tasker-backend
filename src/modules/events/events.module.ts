@@ -9,6 +9,7 @@ import {
   EventAssociation,
   EventAssociationSchema,
 } from './events-association.schema';
+import { EventsAssociationService } from './event-association.service';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import {
     AuthModule,
   ],
   controllers: [EventsController],
-  providers: [EventsService, GoogleCalendarService],
+  providers: [EventsService, EventsAssociationService, GoogleCalendarService],
 })
 export class EventsModule {}

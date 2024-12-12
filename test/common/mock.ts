@@ -32,11 +32,11 @@ export class EventMock {
       description: faker.lorem.paragraph(),
       status: faker.helpers.arrayElement(Object.values(EventStatus)),
       category: faker.helpers.arrayElement(Object.values(EventCategory)),
-      organisers: [
+      organizers: [
         new Types.ObjectId().toString(),
         new Types.ObjectId().toString(),
       ],
-      recepients: [
+      recipients: [
         new Types.ObjectId().toString(),
         new Types.ObjectId().toString(),
       ],
