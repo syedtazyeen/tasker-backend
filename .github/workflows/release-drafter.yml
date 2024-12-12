@@ -1,17 +1,39 @@
-name: Release Drafter
+name: Update Changelog
+
 on:
-  push:
-    branches:
-      - main
   pull_request:
     types:
-      - closed
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main # Adjust this if your main branch is different (e.g., `master`, `develop`)
 
 jobs:
-  update_release_draft:
+  update-changelog:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: release-drafter/release-drafter@v5
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js (if needed for changelog tool)
+        uses: actions/setup-node@v3
         with:
-          config-name: release-drafter.yml
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm install # Install dependencies if needed
+
+      - name: Generate Changelog
+        run: |
+          # Assuming you are using a changelog tool like standard-version or semantic-release
+          npx standard-version --prerelease ${{ github.head_ref }} # This generates the changelog
+
+      - name: Commit and push changelog updates
+        run: |
+          git config --global user.name "tasker"
+          git config --global user.email "themesyed@gmail.com"
+          git add CHANGELOG.md  # Assuming the changelog file is named `CHANGELOG.md`
+          git commit -m "🗒️ doc: update changelog for PR #${{ github.event.pull_request.number }}"
+          git push origin ${{ github.head_ref }}  # Push back the changes to the PR branch
