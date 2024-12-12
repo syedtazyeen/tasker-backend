@@ -23,18 +23,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - uses: release-drafter/release-drafter@v6
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
         with:
-          config-name: release-drafter.yml
-          output-name: changelog.md
-          output-path: ./changelog/
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          bun-version: ${{ secrets.BUN_VERSION }}
+
+      - name: Workflow
+        run: bun run workflow:readme
 
       - name: Commit and push changelog to changelog folder
         run: |
           git config --global user.email "themesyed@gmail.com"
-          git config --global user.name "Your Name"
-          git add changelog/changelog.md
-          git commit -m "Update changelog"
+          git config --global user.name "tasker"
+          git add .
+          git commit -m "📝 docs(bot): Auto sync agents & plugin to readme" || exit 0
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
