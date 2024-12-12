@@ -1,42 +1,22 @@
-name: Release Drafter
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-
-permissions:
-  contents: read
-
 jobs:
-  update_release_draft:
-    permissions:
-      contents: write
-      pull-requests: write
+  changelog:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: ${{ secrets.BUN_VERSION }}
-
-      - name: Workflow
-        run: bun run workflow:readme
-
-      - name: Commit and push changelog to changelog folder
-        run: |
-          git config --global user.email "themesyed@gmail.com"
-          git config --global user.name "tasker"
-          git add .
-          git commit -m "📝 docs(bot): Auto sync agents & plugin to readme" || exit 0
-          git push
+      - name: Update Release Draft
+        uses: release-drafter/release-drafter@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and Push Changelog
+        run: |-
+          git config --global user.name "ReleaseBot"
+          git config --global user.email "releasebot@example.com"
+          git add ./changelog/CHANGELOG.md
+          git commit -m "📝 docs(bot): Auto update changelog for release v${{ github.run_number }}"
+          git push
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
