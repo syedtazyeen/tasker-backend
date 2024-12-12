@@ -1,0 +1,55 @@
+name-template: 'Release ${version}'
+tag-template: 'v${version}'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - feature
+      - feat
+  - title: '🐛 Fixes'
+    labels:
+      - bug
+      - fix
+      - bugfix
+  - title: '📚 Documentation'
+    labels:
+      - docs
+      - documentation
+  - title: '🛠 Maintenance'
+    labels:
+      - chore
+      - refactor
+      - maintain
+  - title: '🎨 Styling'
+    labels:
+      - style
+      - css
+      - ui
+      - ux
+  - title: '🔧 Configuration'
+    labels:
+      - config
+      - configuration
+      - setup
+  - title: '⚡ Performance'
+    labels:
+      - perf
+      - optimization
+      - performance
+  - title: '✅ Tests'
+    labels:
+      - test
+      - testing
+      - ci
+      - unit-test
+  - title: '🔒 Security'
+    labels:
+      - security
+      - vuln
+  - title: '⚙️ Build'
+    labels:
+      - build
+      - ci/cd
+      - pipeline
+
+change-template: '- ${title} (#${number}) by @${author}'
+no-changes-template: '- No significant changes in this release.'
