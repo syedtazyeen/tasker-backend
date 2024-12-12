@@ -1,41 +1,39 @@
-name: Release Drafter Workflow
+name: Update Changelog
 
 on:
-  push:
-    branches:
-      - main  # Trigger on pushes to the main branch
   pull_request:
-    types: [opened, reopened, synchronize]  # Trigger on pull request events
-
-permissions:
-  contents: read  # Read access to repository content for generating changelog
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main # Adjust this if your main branch is different (e.g., `master`, `develop`)
 
 jobs:
-  update_release_draft:
-    name: Update Release Draft
-    runs-on: ubuntu-latest  # Runs the workflow on the latest Ubuntu runner
-
-    permissions:
-      contents: write  # Write access to repository content to create a draft
-      pull-requests: write  # Write access to pull requests to update drafts
-
+  update-changelog:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Check out the repository code
+        uses: actions/checkout@v3
 
-      - name: Set up Release Drafter
-        uses: release-drafter/release-drafter@v6  # Use Release Drafter to generate changelog
+      - name: Set up Node.js (if needed for changelog tool)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
-
-      - name: Commit and push changes
+      - name: Install dependencies
         run: |
-          git config --global user.name "Release Drafter Bot"
-          git config --global user.email "release-drafter@github.com"
-          git add .  # Add any changes made by Release Drafter
-          git commit -m "docs🗒️: update release drafter changelog" || exit 0  # Commit changes if any
-          git push  # Push changes to the repository
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
+          npm install # Install dependencies if needed
 
+      - name: Generate Changelog
+        run: |
+          # Assuming you are using a changelog tool like standard-version or semantic-release
+          npx standard-version --prerelease ${{ github.head_ref }} # This generates the changelog
+
+      - name: Commit and push changelog updates
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add CHANGELOG.md  # Assuming the changelog file is named `CHANGELOG.md`
+          git commit -m "chore: update changelog for PR #${{ github.event.pull_request.number }}"
+          git push origin ${{ github.head_ref }}  # Push back the changes to the PR branch
