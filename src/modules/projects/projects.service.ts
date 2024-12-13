@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Project, ProjectDocument } from './projects.schema';
 import { CreateProjectReqDto, UpdateProjectReqDto } from './projects.dto';
-import { ProjectAssociationService } from '../project-association/project-association.service';
+import { ProjectAssociationService } from '../projects/project-association.service';
 import { AuthGuard } from '@/src/common/guards';
-import { ProjectAssociation } from '../project-association/project-association.schema';
+import { ProjectAssociation } from '../projects/project-association.schema';
 import { UserRole } from '@/src/common/enums';
 import { MongoError } from 'mongodb';
 
@@ -24,13 +24,18 @@ export class ProjectsService {
     try {
       const newProject: Partial<Project> = {
         ...createProjectDto,
-        creatorId: new Types.ObjectId(userId),
+        createdBy: new Types.ObjectId(userId),
       };
       const createdProject = new this.projectModel(newProject);
       const projectAssociation: Partial<ProjectAssociation> = {
-        userId: new Types.ObjectId(userId),
-        projectId: new Types.ObjectId(createdProject.id as string),
-        role: UserRole.ADMIN,
+        projectId: createdProject.id,
+        access: [
+          {
+            userId: new Types.ObjectId(userId),
+            role: UserRole.ADMIN,
+            isActive: true,
+          },
+        ],
       };
       this.projectAssociationService.create(projectAssociation);
       return createdProject.save();

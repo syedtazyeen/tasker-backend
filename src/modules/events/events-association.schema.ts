@@ -21,6 +21,10 @@ export class EventAssociation {
 
   @Prop({ type: Types.ObjectId, ref: 'Project' })
   projects: string[];
+  
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
 export const EventAssociationSchema =

@@ -4,10 +4,10 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { Model, Types } from 'mongoose';
 import { Notification, NotificationDocument } from './notifications.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { ProjectAssociation } from '../project-association/project-association.schema';
 import { Priority, Resource } from '@/src/common/enums';
 import { NotificationPrompts } from '@/src/common/constants/prompts.contants';
 import { ProjectsService } from '../projects/projects.service';
+import { ProjectAssociation } from '../projects/project-association.schema';
 
 @Injectable()
 export class NotificationsService {
@@ -23,7 +23,7 @@ export class NotificationsService {
     type: 'ADDED' | 'CREATED';
   }): Promise<void> {
     const newNotification: Notification = {
-      userId: payload.association.userId,
+      userId: payload.association.access[0].userId,
       title: `${NotificationPrompts.PROJECT_CREATED.title}`,
       description: `${NotificationPrompts.PROJECT_CREATED.description}`,
       isRead: false,

@@ -5,7 +5,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { applyDecorators } from '@nestjs/common';
-import { GetProjAsResDto } from './project-association.dto';
+import { ProjectAssociationResponse } from './project-association.dto';
 
 export const SwaggerTag = {
   findAll: () =>
@@ -19,7 +19,7 @@ export const SwaggerTag = {
       ApiResponse({
         status: 200,
         description: 'Successfully retrieved list of project associations',
-        type: [GetProjAsResDto],
+        type: [ProjectAssociationResponse],
       }),
     ),
   findone: () =>
@@ -31,7 +31,7 @@ export const SwaggerTag = {
       ApiResponse({
         status: 200,
         description: 'Successfully retrieved list of project association',
-        type: GetProjAsResDto,
+        type: ProjectAssociationResponse,
       }),
     ),
   delete: () =>

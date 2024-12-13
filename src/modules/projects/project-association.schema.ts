@@ -4,11 +4,7 @@ import { UserRole } from '@/src/common/enums';
 
 export type ProjectAssociationDocument = ProjectAssociation & Document;
 
-@Schema({ timestamps: true })
-export class ProjectAssociation {
-  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
-  projectId: Types.ObjectId;
-
+export class UserAssociation {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 
@@ -23,13 +19,29 @@ export class ProjectAssociation {
   isActive: boolean;
 }
 
+@Schema({ timestamps: true })
+export class ProjectAssociation {
+  id: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
+  projectId: Types.ObjectId;
+
+  @Prop({ type: [UserAssociation], required: true })
+  access: UserAssociation[];
+
+  createdAt: Date;
+
+  updatedAt: Date;
+}
+
 export const ProjectAssociationSchema =
   SchemaFactory.createForClass(ProjectAssociation);
 
 ProjectAssociationSchema.set('toJSON', {
   virtuals: true,
-  transform: (doc, ret) => {
+  transform: (_, ret) => {
     ret.id = ret._id.toString();
     delete ret._id;
+    delete ret.__v;
   },
 });

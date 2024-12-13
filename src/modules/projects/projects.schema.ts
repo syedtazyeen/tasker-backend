@@ -6,6 +6,8 @@ export type ProjectDocument = Project & Document;
 
 @Schema({ timestamps: true })
 export class Project {
+  id: string;
+
   @Prop({ required: true, unique: true })
   slug: string;
 
@@ -13,19 +15,23 @@ export class Project {
   name: string;
 
   @Prop()
-  description: string;
+  description?: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  creatorId: Types.ObjectId;
+  createdBy: Types.ObjectId;
 
   @Prop()
-  startDate: Date;
+  startDate?: Date;
 
   @Prop()
-  endDate: Date;
+  endDate?: Date;
 
   @Prop({ type: String, enum: Priority, default: Priority.NONE })
-  priority: string;
+  priority?: string;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
